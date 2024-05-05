@@ -14,26 +14,25 @@ class AuthService:
         dbCursor = db.cursor()
         query = 'SELECT * FROM user WHERE username = %s AND password = %s'
         dbCursor.execute(query, (username, password))
-        dato = dbCursor.fetchall()
+        user = dbCursor.fetchone()
         db.close() 
-        return jsonify({'ok': True, 'dato': dato})
 
-        # if username == 'admin' and password == 'password':
-        #     # Crea un token JWT
-        #     token = jwt.encode(
-        #         {
-        #             'user': username,
-        #             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-        #         },
-        #         os.getenv('JWT_SECRET_KEY'),
-        #         algorithm='HS256'
-        #     )
+        if user:
+            # Crea un token JWT
+            token = jwt.encode(
+                {
+                    'user': username,
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+                },
+                os.getenv('JWT_SECRET_KEY'),
+                algorithm='HS256'
+            )
 
-        #     # Devuelve el token al cliente
-        #     return jsonify({'ok': True, 'token': token, 'dato': dato})
+            # Devuelve el token al cliente
+            return jsonify({'ok': True, 'token': token, 'user': user})
             
-        # # Si la autenticación falla, devuelve un error
-        # return jsonify({'ok': False, 'message': 'Credenciales erroneas'}), 401
+        # Si la autenticación falla, devuelve un error
+        return jsonify({'ok': False, 'message': 'Credenciales erroneas'}), 401
 
     def createUser(name, username, password):
         db=mysql.connector.connect(host=os.getenv('DB_HOST'), 
@@ -57,7 +56,7 @@ class AuthService:
 
         dbCursor = db.cursor()
         dbCursor.execute('SELECT * FROM user')
-        dato = dbCursor.fetchall()
+        users = dbCursor.fetchall()
         db.close() 
-        return jsonify({'ok': True, 'dato': dato})
+        return jsonify({'ok': True, 'users': users})
             
