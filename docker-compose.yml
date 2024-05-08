@@ -1,0 +1,15 @@
+version: "1.0"
+
+services:
+  flask-api:
+    image: gperedo/uagrm-sales-app:1.0
+    container_name: uagrm-sales-app-container
+    ports: 
+      - "8000:8000"
+
+  auth-api:
+    image: amurillop/auth-app:v1.2
+    build: .
+    container_name: uagrm-auth-app-container
+    ports: 
+      - "80:5001"
